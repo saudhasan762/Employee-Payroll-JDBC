@@ -108,6 +108,16 @@ public class EmployeePayrollDBService {
     }
 
 
-
-
+    public List<EmployeePayrollData> readDataForDateRange(String start_date, String end_date) {
+        String sql = String.format("SELECT * FROM employee_payroll WHERE START BETWEEN '%s' and '%s';",start_date,end_date);
+        List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            employeePayrollList = this.getEmployeePayrollData(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeePayrollList;
+    }
 }
