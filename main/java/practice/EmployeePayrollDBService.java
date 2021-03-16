@@ -95,5 +95,19 @@ public class EmployeePayrollDBService {
         return 0;
     }
 
+    private int updateEmployeeDataUsingPreparedStatement(String name, double salary) {
+        try (Connection connection = this.getConnection()){
+            String sql = "SELECT * FROM employee_payroll WHERE name = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setDouble(1, salary);
+            return preparedStatement.executeUpdate(sql);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+
 
 }
