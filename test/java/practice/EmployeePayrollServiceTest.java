@@ -46,4 +46,68 @@ public class EmployeePayrollServiceTest {
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollDataForDateRange(EmployeePayrollService.IOService.DB_IO,start_date,end_date);
         Assertions.assertEquals(2,employeePayrollData.size());
     }
+
+    @Test
+    public void givenEmployeeGenderAsMale_whenRetrievedMinimum_ShouldMatchSalary(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'M';
+        double min = employeePayrollService.minOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(1000000.00,min);
+    }
+
+    @Test
+    public void givenEmployeeGenderAsMale_whenRetrievedMaximum_ShouldMatchSalary(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'M';
+        double min = employeePayrollService.maxOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(3000000.00,min);
+    }
+
+    @Test
+    public void givenEmployeeGenderAsMale_whenRetrievedSum_ShouldMatchSumOfSalary(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'M';
+        double sum = employeePayrollService.sumOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(4000000.00,sum);
+    }
+
+    @Test
+    public void givenEmployeeGenderAsFemale_whenRetrievedSum_ShouldMatchSumOfSalary(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'F';
+        double sum = employeePayrollService.sumOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(3000000.00,sum);
+    }
+
+    @Test
+    public void givenEmployeeGenderAsMale_whenRetrievedAverage_ShouldMatchAverageOfSalary(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'M';
+        double average = employeePayrollService.averageOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(2000000.00,average);
+    }
+
+    @Test
+    public void givenEmployeeGenderAsFemale_whenRetrievedAverage_ShouldMatchAverageOfSalary(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'F';
+        double average = employeePayrollService.averageOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(3000000.00,average);
+    }
+
+    @Test
+    public void givenEmployeeGenderAsMale_whenRetrievedCount_ShouldMatchEmployeeCount(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'M';
+        int count = employeePayrollService.countOfEmployee(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(2,count);
+    }
+
+    @Test
+    public void givenEmployeeGenderAsFemale_whenRetrievedCount_ShouldMatchEmployeeCount(){
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        char gender = 'F';
+        int count = employeePayrollService.countOfEmployee(EmployeePayrollService.IOService.DB_IO,gender);
+        Assertions.assertEquals(1,count);
+    }
 }

@@ -18,6 +18,46 @@ public class EmployeePayrollService {
         return this.employeePayrollList;
     }
 
+    public double sumOfEmployeeSalary(IOService ioService, char gender) {
+        if(ioService.equals(IOService.DB_IO)){
+            double sum = employeePayrollDBService.sumOfSalary(gender);
+            return sum;
+        }
+        return 0.0;
+    }
+
+    public double averageOfEmployeeSalary(IOService ioService, char gender) {
+        if(ioService.equals(IOService.DB_IO)){
+            double average = employeePayrollDBService.averageOfSalary(gender);
+            return average;
+        }
+        return 0.0;
+    }
+
+    public int countOfEmployee(IOService ioService, char gender) {
+        if(ioService.equals(IOService.DB_IO)){
+            int count = employeePayrollDBService.countEntries(gender);
+            return count;
+        }
+        return 0;
+    }
+
+    public double minOfEmployeeSalary(IOService ioService, char gender) {
+        if(ioService.equals(IOService.DB_IO)){
+            double salary = employeePayrollDBService.getMinimumSalary(gender);
+            return salary;
+        }
+        return 0.0;
+    }
+
+    public double maxOfEmployeeSalary(IOService ioService, char gender) {
+        if(ioService.equals(IOService.DB_IO)){
+            double salary = employeePayrollDBService.getMaximumSalary(gender);
+            return salary;
+        }
+        return 0.0;
+    }
+
     public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList){

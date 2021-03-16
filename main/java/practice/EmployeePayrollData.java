@@ -8,6 +8,7 @@ public class EmployeePayrollData {
     int employeeID;
     double employeeSalary;
     public LocalDate startDate;
+    public String gender;
 
     public EmployeePayrollData(int employeeID,String employeeName,double employeeSalary) {
         this.employeeName = employeeName;

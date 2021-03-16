@@ -120,4 +120,74 @@ public class EmployeePayrollDBService {
         }
         return employeePayrollList;
     }
+
+    public double sumOfSalary(char gender) {
+        String sql = String.format("SELECT SUM(salary) from employee_payroll WHERE gender  = '%s' GROUP BY gender;",gender);
+        double sum = 0;
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next())
+                sum += resultSet.getDouble("SUM(salary)");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sum;
+    }
+
+    public double averageOfSalary(char gender) {
+        String sql = String.format("SELECT AVG(salary) from employee_payroll WHERE gender  = '%s' GROUP BY gender;",gender);
+        double average = 0;
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next())
+                average = resultSet.getDouble("AVG(salary)");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return average;
+    }
+
+    public int countEntries(char gender) {
+        String sql = String.format("SELECT COUNT(gender) from employee_payroll WHERE gender  = '%s' GROUP BY gender;",gender);
+        int count = 0;
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next())
+                count = resultSet.getInt("COUNT(gender)");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public double getMinimumSalary(char gender) {
+        String sql = String.format("SELECT MIN(salary) from employee_payroll WHERE gender  = '%s' GROUP BY gender;",gender);
+        double min = 0;
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next())
+                min = resultSet.getInt("MIN(salary)");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return min;
+    }
+
+    public double getMaximumSalary(char gender) {
+        String sql = String.format("SELECT MAX(salary) from employee_payroll WHERE gender  = '%s' GROUP BY gender;",gender);
+        double max = 0;
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next())
+                max = resultSet.getInt("MAX(salary)");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return max;
+    }
 }
