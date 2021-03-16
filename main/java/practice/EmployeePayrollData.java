@@ -31,7 +31,9 @@ public class EmployeePayrollData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmployeePayrollData that = (EmployeePayrollData) o;
-        return employeeID == that.employeeID && Double.compare(that.employeeSalary, employeeSalary) == 0 && Objects.equals(employeeName, that.employeeName) && Objects.equals(startDate, that.startDate);
+        return employeeID == that.employeeID &&
+                Double.compare(that.employeeSalary, employeeSalary) == 0 &&
+                Objects.equals(employeeName, that.employeeName);
     }
 
 }
