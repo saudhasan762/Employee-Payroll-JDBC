@@ -1,62 +1,14 @@
 package practice;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class EmployeePayrollService {
     private List<EmployeePayrollData> employeePayrollList;
-    private EmployeePayrollDBService employeePayrollDBService;
-
-    public EmployeePayrollService() {
-        employeePayrollDBService = EmployeePayrollDBService.getInstance();
-    }
-
-    public List<EmployeePayrollData> readEmployeePayrollDataForDateRange(IOService ioService, String start_date, String end_date) {
-        if(ioService.equals(IOService.DB_IO))
-            this.employeePayrollList = employeePayrollDBService.readDataForDateRange(start_date,end_date);
-        return this.employeePayrollList;
-    }
-
-    public double sumOfEmployeeSalary(IOService ioService, char gender) {
-        if(ioService.equals(IOService.DB_IO)){
-            double sum = employeePayrollDBService.sumOfSalary(gender);
-            return sum;
-        }
-        return 0.0;
-    }
-
-    public double averageOfEmployeeSalary(IOService ioService, char gender) {
-        if(ioService.equals(IOService.DB_IO)){
-            double average = employeePayrollDBService.averageOfSalary(gender);
-            return average;
-        }
-        return 0.0;
-    }
-
-    public int countOfEmployee(IOService ioService, char gender) {
-        if(ioService.equals(IOService.DB_IO)){
-            int count = employeePayrollDBService.countEntries(gender);
-            return count;
-        }
-        return 0;
-    }
-
-    public double minOfEmployeeSalary(IOService ioService, char gender) {
-        if(ioService.equals(IOService.DB_IO)){
-            double salary = employeePayrollDBService.getMinimumSalary(gender);
-            return salary;
-        }
-        return 0.0;
-    }
-
-    public double maxOfEmployeeSalary(IOService ioService, char gender) {
-        if(ioService.equals(IOService.DB_IO)){
-            double salary = employeePayrollDBService.getMaximumSalary(gender);
-            return salary;
-        }
-        return 0.0;
-    }
+    private final EmployeePayrollDBService employeePayrollDBService;
 
     public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 
@@ -65,7 +17,35 @@ public class EmployeePayrollService {
         this.employeePayrollList=employeePayrollList;
     }
 
+    public EmployeePayrollService() {
+        employeePayrollDBService = EmployeePayrollDBService.getInstance();
+    }
 
+    public List<EmployeePayrollData> readEmployeePayrollDataForDateRange(IOService ioService, LocalDate start_date, LocalDate end_date) {
+        if(ioService.equals(IOService.DB_IO))
+            this.employeePayrollList = employeePayrollDBService.getEmployeeForDateRange(start_date,end_date);
+        return this.employeePayrollList;
+    }
+
+    public Map<String, Double> readAverageSalaryByGender(IOService ioService) {
+        if(ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getAverageSalaryByGender();
+        return null;
+    }
+
+    public Map<String, Double> readSumOfSalaryByGender(IOService ioService) {
+        if(ioService.equals(IOService.DB_IO)){
+            return employeePayrollDBService.getSumOfSalaryByGender();
+        }
+        return null;
+    }
+
+    public Map<String, Integer> readCountByGender(IOService ioService) {
+        if(ioService.equals(IOService.DB_IO)){
+            return employeePayrollDBService.getCountByGender();
+        }
+        return null;
+    }
 
     public void readData(IOService ioService){
         if (ioService.equals(IOService.CONSOLE_IO)) {
@@ -116,6 +96,9 @@ public class EmployeePayrollService {
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
     }
 
+    public void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary,startDate,gender));
+    }
 
     public void printEmployeePayrollData(IOService ioService) {
         if (ioService.equals(IOService.FILE_IO))

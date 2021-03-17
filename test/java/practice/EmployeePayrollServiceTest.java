@@ -3,8 +3,10 @@ package practice;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollServiceTest {
     @Test
@@ -39,75 +41,48 @@ public class EmployeePayrollServiceTest {
     }
 
     @Test
-    public void givenDateRangeForEmployee_WhenRetrieved_ShouldMatchEmployeeCount(){
+    public void givenDateRange_WhenRetrieved_ShouldMatchEmployeeCount(){
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        String start_date = "2019-01-01";
-        String end_date = "2020-10-05";
-        List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollDataForDateRange(EmployeePayrollService.IOService.DB_IO,start_date,end_date);
-        Assertions.assertEquals(2,employeePayrollData.size());
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        LocalDate startDate = LocalDate.of(2018,1,1);
+        LocalDate endDate = LocalDate.now();
+        List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollDataForDateRange(EmployeePayrollService.IOService.DB_IO,startDate,endDate);
+        Assertions.assertEquals(3,employeePayrollData.size());
     }
 
     @Test
-    public void givenEmployeeGenderAsMale_whenRetrievedMinimum_ShouldMatchSalary(){
+    public void givenEmployeePayrollData_whenRetrievedSumByGender_ShouldMatchSumOfSalary(){
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'M';
-        double min = employeePayrollService.minOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(1000000.00,min);
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String, Double> sumOfSalaryByGender = employeePayrollService.readSumOfSalaryByGender(EmployeePayrollService.IOService.DB_IO);
+        Assertions.assertTrue(sumOfSalaryByGender.get("M").equals(4000000.00) &
+                sumOfSalaryByGender.get("F").equals(3000000.00));
     }
 
     @Test
-    public void givenEmployeeGenderAsMale_whenRetrievedMaximum_ShouldMatchSalary(){
+    public void givenPayrollData_whenRetrievedAverageByGender_ShouldMatchAverageOfSalary(){
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'M';
-        double min = employeePayrollService.maxOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(3000000.00,min);
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String, Double> averageSalaryByGender = employeePayrollService.readAverageSalaryByGender(EmployeePayrollService.IOService.DB_IO);
+        Assertions.assertTrue(averageSalaryByGender.get("M").equals(2000000.00) &
+                averageSalaryByGender.get("F").equals(3000000.00));
     }
 
     @Test
-    public void givenEmployeeGenderAsMale_whenRetrievedSum_ShouldMatchSumOfSalary(){
+    public void givenPayrollData_whenRetrievedCountByGender_ShouldMatchEmployeeCount(){
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'M';
-        double sum = employeePayrollService.sumOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(4000000.00,sum);
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String, Integer> countByGender= employeePayrollService.readCountByGender(EmployeePayrollService.IOService.DB_IO);
+        Assertions.assertTrue(countByGender.get("M").equals(2) &
+                countByGender.get("F").equals(1));
     }
 
     @Test
-    public void givenEmployeeGenderAsFemale_whenRetrievedSum_ShouldMatchSumOfSalary(){
+    public void givenNewEmployee_WhenAdded_ShouldSyncWithDB(){
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'F';
-        double sum = employeePayrollService.sumOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(3000000.00,sum);
-    }
-
-    @Test
-    public void givenEmployeeGenderAsMale_whenRetrievedAverage_ShouldMatchAverageOfSalary(){
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'M';
-        double average = employeePayrollService.averageOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(2000000.00,average);
-    }
-
-    @Test
-    public void givenEmployeeGenderAsFemale_whenRetrievedAverage_ShouldMatchAverageOfSalary(){
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'F';
-        double average = employeePayrollService.averageOfEmployeeSalary(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(3000000.00,average);
-    }
-
-    @Test
-    public void givenEmployeeGenderAsMale_whenRetrievedCount_ShouldMatchEmployeeCount(){
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'M';
-        int count = employeePayrollService.countOfEmployee(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(2,count);
-    }
-
-    @Test
-    public void givenEmployeeGenderAsFemale_whenRetrievedCount_ShouldMatchEmployeeCount(){
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        char gender = 'F';
-        int count = employeePayrollService.countOfEmployee(EmployeePayrollService.IOService.DB_IO,gender);
-        Assertions.assertEquals(1,count);
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToPayroll("Mark", 5000000.00, LocalDate.now(), "M");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
+        Assertions.assertTrue(result);
     }
 }
