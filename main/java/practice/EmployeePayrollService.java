@@ -92,7 +92,6 @@ public class EmployeePayrollService {
         System.out.println(employeePayrollDataList);
     }
 
-
     public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService){
         if(ioService.equals(IOService.DB_IO))
             this.employeePayrollList = employeePayrollDBService.readData();
