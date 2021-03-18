@@ -53,7 +53,6 @@ public class EmployeePayrollService {
             int empID = scan.nextInt();
             System.out.println("Enter Employee Salary");
             int empSalary = scan.nextInt();
-
             EmployeePayrollData adder = new EmployeePayrollData(empID, empName, empSalary);
             employeePayrollList.add(adder);
         }else if (ioService.equals(IOService.FILE_IO)){
@@ -92,6 +91,7 @@ public class EmployeePayrollService {
         }
         System.out.println(employeePayrollDataList);
     }
+
 
     public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService){
         if(ioService.equals(IOService.DB_IO))
