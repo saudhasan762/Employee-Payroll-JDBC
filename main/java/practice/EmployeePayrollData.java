@@ -21,6 +21,11 @@ public class EmployeePayrollData {
         this.startDate = startDate;
     }
 
+    public EmployeePayrollData(int id, String name, String gender, double salary, LocalDate startDate) {
+        this(id,name,salary,startDate);
+        this.gender = gender;
+    }
+
 
     @Override
     public String toString() {
@@ -36,5 +41,12 @@ public class EmployeePayrollData {
                 Double.compare(that.employeeSalary, employeeSalary) == 0 &&
                 Objects.equals(employeeName, that.employeeName);
     }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeName, employeeSalary, startDate, gender);
+    }
+
 
 }

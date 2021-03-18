@@ -1,10 +1,7 @@
 package practice;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class EmployeePayrollService {
     private List<EmployeePayrollData> employeePayrollList;
@@ -64,6 +61,38 @@ public class EmployeePayrollService {
         }
     }
 
+    public void addEmployeeToPayroll(List<EmployeePayrollData> employeePayrollDataList) {
+        employeePayrollDataList.forEach(employeePayrollData -> {
+            System.out.println("Employee Being Added: "+employeePayrollData.employeeName);
+            this.addEmployeeToPayroll(employeePayrollData.employeeName, employeePayrollData.employeeSalary,
+                    employeePayrollData.startDate, employeePayrollData.gender);
+            System.out.println("Employee Added: "+employeePayrollData.employeeName);
+        });
+        System.out.println(this.employeePayrollList);
+    }
+
+    public void addEmployeeToPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList){
+        Map<Integer, Boolean> integerBooleanMap = new HashMap<>();
+        employeePayrollDataList.forEach(employeePayrollData -> {
+            Runnable task = () -> {
+                integerBooleanMap.put(employeePayrollData.hashCode(), false);
+                System.out.println("Employee Being Added: "+Thread.currentThread().getName());
+                this.addEmployeeToPayroll(employeePayrollData.employeeName, employeePayrollData.employeeSalary,
+                        employeePayrollData.startDate, employeePayrollData.gender);
+                integerBooleanMap.put(employeePayrollData.hashCode(), true);
+                System.out.println("Employee Added: "+Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, employeePayrollData.employeeName);
+            thread.start();
+        });
+        while (integerBooleanMap.containsValue(false)){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {}
+        }
+        System.out.println(employeePayrollDataList);
+    }
+
     public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService){
         if(ioService.equals(IOService.DB_IO))
             this.employeePayrollList = employeePayrollDBService.readData();
@@ -108,7 +137,7 @@ public class EmployeePayrollService {
     public long countEntries(IOService ioService) {
         if (ioService.equals(IOService.FILE_IO))
             return new EmployeePayrollFileIOService().countEntries();
-        return 0;
+        return employeePayrollList.size();
     }
 
     public static void main(String[] args) {
