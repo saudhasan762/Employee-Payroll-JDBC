@@ -6,8 +6,7 @@ import java.util.*;
 public class EmployeePayrollService {
     private List<EmployeePayrollData> employeePayrollList;
     private final EmployeePayrollDBService employeePayrollDBService;
-
-    public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
+    public enum IOService{CONSOLE_IO,FILE_IO,DB_IO}
 
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList){
         this();

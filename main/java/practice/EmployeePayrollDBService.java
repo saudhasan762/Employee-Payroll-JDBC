@@ -1,5 +1,6 @@
 package practice;
 
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class EmployeePayrollDBService {
         return employeePayrollDBService;
     }
 
-    private synchronized Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
         connectionCounter++;
         String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
         String userName = "root";
