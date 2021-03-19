@@ -6,11 +6,11 @@ import java.util.*;
 public class EmployeePayrollService {
     private List<EmployeePayrollData> employeePayrollList;
     private final EmployeePayrollDBService employeePayrollDBService;
-    public enum IOService{CONSOLE_IO,FILE_IO,DB_IO}
+    public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList){
         this();
-        this.employeePayrollList=employeePayrollList;
+        this.employeePayrollList=new ArrayList<>(employeePayrollList);
     }
 
     public EmployeePayrollService() {

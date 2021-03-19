@@ -1,7 +1,12 @@
 package practice;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.google.gson.Gson;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,7 +16,7 @@ import java.util.Map;
 
 public class EmployeePayrollServiceTest {
     @Test
-    void given3EmployeeDataWhenWrittenToFilesShouldMatchEmployeeEntries() {
+    public void given3EmployeeDataWhenWrittenToFilesShouldMatchEmployeeEntries() {
         EmployeePayrollData[] arrayOfEmp={
                 new EmployeePayrollData(1,"Jeff Bezos",10000.0),
                 new EmployeePayrollData(2,"Bill Gates",20000.0),
@@ -22,14 +27,14 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.printEmployeePayrollData(EmployeePayrollService.IOService.FILE_IO);
         long entries = employeePayrollService.countEntries(EmployeePayrollService.IOService.FILE_IO);
         System.out.println(entries);
-        Assertions.assertEquals(3,entries);
+        Assert.assertEquals(3,entries);
     }
 
     @Test
     public void givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount(){
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        Assertions.assertEquals(3,employeePayrollData.size());
+        Assert.assertEquals(3,employeePayrollData.size());
     }
 
     @Test
@@ -38,7 +43,7 @@ public class EmployeePayrollServiceTest {
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         employeePayrollService.updateEmployeeSalary("Terisa",3000000.00);
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
-        Assertions.assertTrue(result);
+        Assert.assertTrue(result);
     }
 
     @Test
@@ -48,7 +53,7 @@ public class EmployeePayrollServiceTest {
         LocalDate startDate = LocalDate.of(2018,1,1);
         LocalDate endDate = LocalDate.now();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollDataForDateRange(EmployeePayrollService.IOService.DB_IO,startDate,endDate);
-        Assertions.assertEquals(3,employeePayrollData.size());
+        Assert.assertEquals(3,employeePayrollData.size());
     }
 
     @Test
@@ -56,7 +61,7 @@ public class EmployeePayrollServiceTest {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         Map<String, Double> sumOfSalaryByGender = employeePayrollService.readSumOfSalaryByGender(EmployeePayrollService.IOService.DB_IO);
-        Assertions.assertTrue(sumOfSalaryByGender.get("M").equals(4000000.00) &
+        Assert.assertTrue(sumOfSalaryByGender.get("M").equals(4000000.00) &
                 sumOfSalaryByGender.get("F").equals(3000000.00));
     }
 
@@ -65,7 +70,7 @@ public class EmployeePayrollServiceTest {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         Map<String, Double> averageSalaryByGender = employeePayrollService.readAverageSalaryByGender(EmployeePayrollService.IOService.DB_IO);
-        Assertions.assertTrue(averageSalaryByGender.get("M").equals(2000000.00) &
+        Assert.assertTrue(averageSalaryByGender.get("M").equals(2000000.00) &
                 averageSalaryByGender.get("F").equals(3000000.00));
     }
 
@@ -74,7 +79,7 @@ public class EmployeePayrollServiceTest {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         Map<String, Integer> countByGender= employeePayrollService.readCountByGender(EmployeePayrollService.IOService.DB_IO);
-        Assertions.assertTrue(countByGender.get("M").equals(2) &
+        Assert.assertTrue(countByGender.get("M").equals(2) &
                 countByGender.get("F").equals(1));
     }
 
@@ -84,7 +89,7 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         employeePayrollService.addEmployeeToPayroll("Mark", 5000000.00, LocalDate.now(), "M");
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
-        Assertions.assertTrue(result);
+        Assert.assertTrue(result);
     }
 
     @Test
@@ -107,6 +112,32 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.addEmployeeToPayrollWithThreads(Arrays.asList(arrayOfEmp));
         Instant threadEnd = Instant.now();
         System.out.println("Duration with Thread: "+Duration.between(threadStart, threadEnd));
-        Assertions.assertEquals(13,employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
+        Assert.assertEquals(13,employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
     }
+
+    @Before
+    public void setup(){
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 3000;
+    }
+
+    public EmployeePayrollData[] getEmployeeList() {
+        Response response = RestAssured.get("/employee_payroll");
+        System.out.println("EMPLOYEE PAYROLL ENTRIES IN JSONServer:\n" +response.asString());
+        EmployeePayrollData[] arrayOfEmp = new Gson().fromJson(response.asString(), EmployeePayrollData[].class);
+        return arrayOfEmp;
+    }
+
+    @Test
+    public void givenEmployeeDataInJsonServer_WhenRetrieved_ShouldMatchTheCount(){
+        EmployeePayrollData[] arrayOfEmp = getEmployeeList();
+        EmployeePayrollService employeePayrollService;
+        employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmp));
+        long entries = employeePayrollService.countEntries(EmployeePayrollService.IOService.REST_IO);
+        Assert.assertEquals(2,entries);
+    }
+
+
+
+
 }
