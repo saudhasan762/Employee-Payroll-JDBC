@@ -4,16 +4,16 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class EmployeePayrollData {
-    String employeeName;
-    int employeeID;
-    double employeeSalary;
-    public LocalDate startDate;
+    int id;
+    String name;
     public String gender;
+    double salary;
+    public LocalDate startDate;
 
-    public EmployeePayrollData(int employeeID,String employeeName,double employeeSalary) {
-        this.employeeName = employeeName;
-        this.employeeID = employeeID;
-        this.employeeSalary = employeeSalary;
+    public EmployeePayrollData(int id,String name,double salary) {
+        this.name = name;
+        this.id = id;
+        this.salary = salary;
     }
 
     public EmployeePayrollData(int id, String name, double salary, LocalDate startDate) {
@@ -26,10 +26,9 @@ public class EmployeePayrollData {
         this.gender = gender;
     }
 
-
     @Override
     public String toString() {
-        return "Employee Id: '" + employeeID + '\'' + ", Employee Name: " + employeeName + ", Employee Salary: " + employeeSalary;
+        return "Employee Id: '" + id + '\'' + ", Employee Name: " + name + ", Employee Salary: " + salary;
     }
 
     @Override
@@ -37,15 +36,15 @@ public class EmployeePayrollData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmployeePayrollData that = (EmployeePayrollData) o;
-        return employeeID == that.employeeID &&
-                Double.compare(that.employeeSalary, employeeSalary) == 0 &&
-                Objects.equals(employeeName, that.employeeName);
+        return id == that.id &&
+                Double.compare(that.salary, salary) == 0 &&
+                Objects.equals(name, that.name);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(employeeName, employeeSalary, startDate, gender);
+        return Objects.hash(id, name, gender, salary, startDate);
     }
 
 

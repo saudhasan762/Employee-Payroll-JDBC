@@ -6,6 +6,9 @@ import java.util.*;
 public class EmployeePayrollService {
     private List<EmployeePayrollData> employeePayrollList;
     private final EmployeePayrollDBService employeePayrollDBService;
+
+
+
     public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList){
@@ -61,10 +64,10 @@ public class EmployeePayrollService {
 
     public void addEmployeeToPayroll(List<EmployeePayrollData> employeePayrollDataList) {
         employeePayrollDataList.forEach(employeePayrollData -> {
-            System.out.println("Employee Being Added: "+employeePayrollData.employeeName);
-            this.addEmployeeToPayroll(employeePayrollData.employeeName, employeePayrollData.employeeSalary,
+            System.out.println("Employee Being Added: "+employeePayrollData.name);
+            this.addEmployeeToPayroll(employeePayrollData.name, employeePayrollData.salary,
                     employeePayrollData.startDate, employeePayrollData.gender);
-            System.out.println("Employee Added: "+employeePayrollData.employeeName);
+            System.out.println("Employee Added: "+employeePayrollData.name);
         });
         System.out.println(this.employeePayrollList);
     }
@@ -75,12 +78,12 @@ public class EmployeePayrollService {
             Runnable task = () -> {
                 integerBooleanMap.put(employeePayrollData.hashCode(), false);
                 System.out.println("Employee Being Added: "+Thread.currentThread().getName());
-                this.addEmployeeToPayroll(employeePayrollData.employeeName, employeePayrollData.employeeSalary,
+                this.addEmployeeToPayroll(employeePayrollData.name, employeePayrollData.salary,
                         employeePayrollData.startDate, employeePayrollData.gender);
                 integerBooleanMap.put(employeePayrollData.hashCode(), true);
                 System.out.println("Employee Added: "+Thread.currentThread().getName());
             };
-            Thread thread = new Thread(task, employeePayrollData.employeeName);
+            Thread thread = new Thread(task, employeePayrollData.name);
             thread.start();
         });
         while (integerBooleanMap.containsValue(false)){
@@ -106,12 +109,12 @@ public class EmployeePayrollService {
         int result = employeePayrollDBService.updateEmployeeData(name,salary);
         if (result == 0) return;
         EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
-        if (employeePayrollData != null) employeePayrollData.employeeSalary = salary;
+        if (employeePayrollData != null) employeePayrollData.salary = salary;
     }
 
     private EmployeePayrollData getEmployeePayrollData(String name) {
         return this.employeePayrollList.stream()
-                .filter(employeePayrollDataItem -> employeePayrollDataItem.employeeName.equals(name) )
+                .filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name) )
                 .findFirst()
                 .orElse(null);
     }
@@ -121,6 +124,13 @@ public class EmployeePayrollService {
             System.out.println("OutPut\n"+employeePayrollList);
         else if (ioService.equals(IOService.FILE_IO))
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
+    }
+
+    public void addEmployeeToPayroll(EmployeePayrollData employeePayrollData, IOService ioService){
+        if(ioService.equals(IOService.DB_IO))
+            this.addEmployeeToPayroll(employeePayrollData.name, employeePayrollData.salary,
+                    employeePayrollData.startDate, employeePayrollData.gender);
+        else employeePayrollList.add(employeePayrollData);
     }
 
     public void addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender) {
