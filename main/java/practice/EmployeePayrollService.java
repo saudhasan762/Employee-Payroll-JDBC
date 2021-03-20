@@ -119,6 +119,13 @@ public class EmployeePayrollService {
         if (employeePayrollData != null) employeePayrollData.salary = salary;
     }
 
+    public void deleteEmployeePayroll(String name, IOService ioService) {
+        if(ioService.equals(IOService.REST_IO)){
+            EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+            employeePayrollList.remove(employeePayrollData);
+        }
+    }
+
     public EmployeePayrollData getEmployeePayrollData(String name) {
         return this.employeePayrollList.stream()
                 .filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name) )
@@ -153,6 +160,7 @@ public class EmployeePayrollService {
         if (ioService.equals(IOService.FILE_IO))
             return new EmployeePayrollFileIOService().countEntries();
         return employeePayrollList.size();
+
     }
 
     public static void main(String[] args) {
